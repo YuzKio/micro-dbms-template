@@ -14,7 +14,14 @@ export function isExternal(path) {
  * @param {string} str
  * @returns {Boolean}
  */
+const valid_map = {
+  'admin': '111111',
+  'editor': '123456'
+}
 export function validUsername(str) {
-  const valid_map = ['admin', 'editor']
-  return valid_map.indexOf(str.trim()) >= 0
+  return Object.hasOwnProperty.call(valid_map, str)
+}
+
+export function validPassword(usn, psw) {
+  return valid_map[usn] === psw
 }
