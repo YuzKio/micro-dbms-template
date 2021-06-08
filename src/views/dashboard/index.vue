@@ -4,13 +4,12 @@
     <div class="dashboard-timer">{{ nowTime }}</div>
     <el-divider></el-divider>
     <div class="dashboard-todo">
-      <div>您可能想要</div>
       <ul class="dashboard-todo-nav">
         <li>
           <div class="dashboard-todo-nav-card">
             <img src="https://element.eleme.cn/static/guide.0a8462c.png" />
             <div>
-              <router-link to="/">连接数据库</router-link>
+              <router-link to="/database">连接数据库</router-link>
             </div>
           </div>
         </li>
@@ -18,7 +17,7 @@
           <div class="dashboard-todo-nav-card">
             <img src="https://element.eleme.cn/static/resource.a72b8f8.png" />
             <div>
-              <router-link to="/">查看数据库</router-link>
+              <router-link to="/database/table">查看数据表</router-link>
             </div>
           </div>
         </li>
@@ -26,7 +25,7 @@
           <div class="dashboard-todo-nav-card">
             <img src="https://element.eleme.cn/static/component.bd3411b.png" />
             <div>
-              <router-link to="/">指令编写</router-link>
+              <router-link to="/form/index">指令编写</router-link>
             </div>
           </div>
         </li>
@@ -80,7 +79,7 @@ export default {
   }
 }
 .dashboard-todo-nav {
-  margin: 30px 0 0 -30px;
+  margin: 40px 0 0 -30px;
   li{
     float: left;
     width: 33.3%;
@@ -106,7 +105,7 @@ export default {
     }
     div {
       color: #fff;
-      line-height: 40px;
+      line-height: 43px;
       height: 45px;
       border: 1px solid #eaeefb;
       border-radius: 5px;

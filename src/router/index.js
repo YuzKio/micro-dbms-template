@@ -51,28 +51,28 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'microDMBSfront', icon: 'dashboard' }
+      meta: { title: 'microDBMSfront', icon: 'dashboard' }
     }]
   },
 
   {
-    path: '/example',
+    path: '/database',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/database/show',
+    name: 'Database',
+    meta: { title: '数据库', icon: 'el-icon-s-help' },
     children: [
+      {
+        path: 'show',
+        name: 'Show',
+        component: () => import('@/views/table/index'),
+        meta: { title: '连接数据库', icon: 'table' }
+      },
       {
         path: 'table',
         name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
         component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        meta: { title: '管理数据表', icon: 'tree' }
       }
     ]
   },
