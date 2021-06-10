@@ -1,49 +1,68 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="Activity name">
-        <el-input v-model="form.name" />
-      </el-form-item>
-      <el-form-item label="Activity zone">
-        <el-select v-model="form.region" placeholder="please select your zone">
-          <el-option label="Zone one" value="shanghai" />
-          <el-option label="Zone two" value="beijing" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Activity time">
-        <el-col :span="11">
-          <el-date-picker v-model="form.date1" type="date" placeholder="Pick a date" style="width: 100%;" />
-        </el-col>
-        <el-col :span="2" class="line">-</el-col>
-        <el-col :span="11">
-          <el-time-picker v-model="form.date2" type="fixed-time" placeholder="Pick a time" style="width: 100%;" />
-        </el-col>
-      </el-form-item>
-      <el-form-item label="Instant delivery">
-        <el-switch v-model="form.delivery" />
-      </el-form-item>
-      <el-form-item label="Activity type">
-        <el-checkbox-group v-model="form.type">
-          <el-checkbox label="Online activities" name="type" />
-          <el-checkbox label="Promotion activities" name="type" />
-          <el-checkbox label="Offline activities" name="type" />
-          <el-checkbox label="Simple brand exposure" name="type" />
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="Resources">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="Sponsor" />
-          <el-radio label="Venue" />
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="Activity form">
-        <el-input v-model="form.desc" type="textarea" />
+    <el-form ref="form" :model="form" label-width="60px" style="display: inline-block; width: 50%">
+      <el-form-item>
+        <el-input
+          title="指令编写"
+          type="textarea"
+          :rows="19"
+          placeholder="请输入sql语句"
+          v-model="form.textarea"
+          style="width: 450px"
+        >
+        </el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">Create</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
+        <el-button type="primary" @click="onSubmit">运行</el-button>
+        <el-button @click="onCancel">重置</el-button>
       </el-form-item>
     </el-form>
+    <el-table
+      v-loading="listLoading"
+      :data="tableData"
+      element-loading-text="Loading"
+      border
+      fit
+      highlight-current-row
+      style="display: inline-block; width: 50%"
+    >
+      <el-table-column align="center" label="ID">
+        <template slot-scope="scope">
+          {{ scope.$index }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="数据表名称">
+        <template slot-scope="scope">
+          {{ scope.row.name }}
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="操作" align="center">
+        <template>
+          <!--          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>-->
+          <el-button
+            :type="gray"
+            size="small"
+          >
+            查看
+          </el-button>
+        </template>
+        <template>
+          <!--          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>-->
+          <el-button
+            :type="gray"
+            size="small"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" prop="created_at" label="上次连接时间" width="200">
+        <template slot-scope="scope">
+          <i class="el-icon-time" />
+          <span>{{ scope.row.display_time }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
@@ -52,14 +71,7 @@ export default {
   data() {
     return {
       form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        textarea: ''
       }
     }
   },
@@ -78,8 +90,8 @@ export default {
 </script>
 
 <style scoped>
-.line{
-  text-align: center;
+el-form-item {
+  padding-left: -20px;
 }
 </style>
 

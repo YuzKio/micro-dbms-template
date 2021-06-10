@@ -17,7 +17,7 @@
           <div class="dashboard-todo-nav-card">
             <img src="https://element.eleme.cn/static/resource.a72b8f8.png" />
             <div>
-              <router-link to="/database/table">查看数据表</router-link>
+              <router-link to="/database/table">管理数据表</router-link>
             </div>
           </div>
         </li>
@@ -25,7 +25,7 @@
           <div class="dashboard-todo-nav-card">
             <img src="https://element.eleme.cn/static/component.bd3411b.png" />
             <div>
-              <router-link to="/form/index">指令编写</router-link>
+              <router-link to="/sql/index">指令编写</router-link>
             </div>
           </div>
         </li>

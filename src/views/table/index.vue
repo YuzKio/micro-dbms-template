@@ -1,5 +1,11 @@
 <template>
   <div class="app-container">
+    <el-form :inline="true">
+      <el-form-item style="float: right;">
+        <el-button type="primary" @click="createDatabase">创建数据库</el-button>
+        <el-button @click="deleteDatabase">删除数据库</el-button>
+      </el-form-item>
+    </el-form>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -20,7 +26,6 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="状态" width="110" align="center">
         <template slot-scope="scope">
-<!--          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>-->
           <el-button
             :type="scope.row.status | statusFilter"
             size="small"
@@ -69,7 +74,20 @@ export default {
         this.list = response.data.items
         this.listLoading = false
       })
+    },
+    createDatabase() {
+      this.$prompt('请输入数据库名', '创建数据库', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
+    },
+    deleteDatabase() {
+      this.$prompt('请输入数据库名', '删除数据库', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
     }
+
   }
 }
 </script>
