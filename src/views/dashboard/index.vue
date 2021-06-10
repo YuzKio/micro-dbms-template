@@ -1,7 +1,14 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">Welcome {{ name }}!</div>
-    <div class="dashboard-timer">{{ nowTime }}</div>
+    <div class="dashboard-info">
+      <div class="dashboard-status">
+        <span>现在连接的数据库：</span>
+        <span v-if="!databaseName.length">无</span>
+        <span v-else>{{ databaseName }}</span>
+      </div>
+      <div class="dashboard-timer">{{ nowTime }}</div>
+    </div>
     <el-divider></el-divider>
     <div class="dashboard-todo">
       <ul class="dashboard-todo-nav">
@@ -39,9 +46,13 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
+  props: {
+    databaseName: String
+  },
   data() {
     return {
-      nowTime: new Date()
+      nowTime: new Date(),
+      isConnected: false
     }
   },
   mounted() {
@@ -57,7 +68,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'name'
+      'name',
+      'databaseName'
     ])
   }
 }
@@ -72,8 +84,16 @@ export default {
     font-size: 30px;
     line-height: 46px;
   }
+  &-info {
+    padding-top: 10px;
+    margin-bottom: -10px;
+  }
+  &-status {
+    display: inline-block;
+  }
   &-timer {
     //margin: 20px 0 0 20px;
+    display: inline-block;
     float: right;
     font-size: 12px;
   }

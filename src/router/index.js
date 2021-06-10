@@ -13,7 +13,7 @@ import Layout from '@/layout'
  * hidden: true                   if set true, item will not show in the sidebar(default is false)
  * alwaysShow: true               if set true, will always show the root menu
  *                                if not set alwaysShow, when item has more than one children route,
- *                                it will becomes nested mode, otherwise not show the root menu
+ *                                it will becomes detail mode, otherwise not show the root menu
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
@@ -65,13 +65,13 @@ export const constantRoutes = [
       {
         path: 'show',
         name: 'Show',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/database/index'),
         meta: { title: '连接数据库', icon: 'table' }
       },
       {
         path: 'table',
         name: 'Table',
-        component: () => import('@/views/tree/index'),
+        component: () => import('@/views/table/index'),
         meta: { title: '管理数据表', icon: 'tree' }
       }
     ]
@@ -84,7 +84,7 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'SQL',
-        component: () => import('@/views/form/index'),
+        component: () => import('@/views/panel/index'),
         meta: { title: '指令编写', icon: 'form' }
       }
     ]
@@ -103,16 +103,16 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
+  // {
+  //   path: 'external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+  //       meta: { title: 'External Link', icon: 'link' }
+  //     }
+  //   ]
+  // },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
