@@ -26,9 +26,10 @@
       <el-table-column class-name="status-col" label="操作" width="200" align="center">
         <template slot-scope="scope">
           <el-button
-            :type="'连接' | statusFilter"
+            :type="statusFilter[statusOfDB[scope.$index]]"
             size="small"
             @click="connectDatabase(scope.$index)"
+            :disabled="btnBoolean[scope.$index]"
           >
             {{ statusOfDB[scope.$index] }}
           </el-button>
@@ -54,21 +55,27 @@
 import { getList, connect, drop } from '@/api/database'
 
 export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        '已连接': 'success',
-        '连接': 'primary',
-        '重试': 'danger'
-      }
-      return statusMap[status]
-    }
-  },
+  // filters: {
+  //   statusFilter(status) {
+  //     const statusMap = {
+  //       '已连接': 'success',
+  //       '连接': 'primary',
+  //       '重试': 'danger'
+  //     }
+  //     return statusMap[status]
+  //   }
+  // },
   data() {
     return {
       list: null,
       listLoading: true,
-      statusOfDB: []
+      statusOfDB: [],
+      statusFilter: {
+        '已连接': 'success',
+        '连接': 'primary',
+        '重试': 'danger'
+      },
+      btnBoolean: []
     }
   },
   created() {
@@ -87,6 +94,7 @@ export default {
       const len = this.list.length
       for (let i = 0; i < len; i++) {
         this.statusOfDB[i] = '连接'
+        this.btnBoolean[i] = false
       }
     },
     createDatabase() {
@@ -96,19 +104,24 @@ export default {
       })
     },
     connectDatabase(index) {
-      const test = {
+      const db = {
         db_name: this.list[index].title
       }
-      connect(test).then(response => {
+      connect(db).then(response => {
         // this.$forceUpdate()
+        for (let i = 0; i < this.list.length; i++) {
+          if (this.statusOfDB[i] === '已连接') {
+            this.$set(this.statusOfDB, i, '连接')
+            this.btnBoolean[i] = false
+          }
+        }
         this.$set(this.statusOfDB, index, '已连接')
-        var x = document.getElementById(index)
-        x.style = 'success'
+        this.btnBoolean[index] = true
+        this.$store.dispatch('database/changeDatabase', this.list[index].title)
       }).catch(() => {
-        this.$forceUpdate()
+        // this.$forceUpdate()
         this.$set(this.statusOfDB, index, '重试')
-        var x = document.getElementById(index)
-        x.style = 'danger'
+        this.btnBoolean[index] = false
       })
     },
     dropDatabase(title) {

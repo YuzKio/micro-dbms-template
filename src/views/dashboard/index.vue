@@ -55,7 +55,7 @@ export default {
   methods: {
     handleClickManage() {
       if (this.databaseName) {
-        this.$store.dispatch('/database/table')
+        this.$router.push('/database/table')
       } else {
         this.$message({
           type: 'error',
@@ -67,7 +67,7 @@ export default {
     },
     handleClickSql() {
       if (this.databaseName) {
-        this.$store.dispatch('/sql/index')
+        this.$router.push('/sql/index')
       } else {
         this.$message({
           type: 'error',
