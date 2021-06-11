@@ -23,13 +23,13 @@
         <li>
           <div class="dashboard-todo-nav-card">
             <img src="https://element.eleme.cn/static/resource.a72b8f8.png" />
-            <div>
-              <router-link to="/database/table">管理数据表</router-link>
+            <div @click="handleClickManage()">
+              <span>管理数据表</span>
             </div>
           </div>
         </li>
         <li>
-          <div class="dashboard-todo-nav-card">
+          <div class="dashboard-todo-nav-card" @click="handleClickSql()">
             <img src="https://element.eleme.cn/static/component.bd3411b.png" />
             <div>
               <router-link to="/sql/index">指令编写</router-link>
@@ -46,13 +46,36 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
-  props: {
-    databaseName: String
-  },
   data() {
     return {
       nowTime: new Date(),
       isConnected: false
+    }
+  },
+  methods: {
+    handleClickManage() {
+      if (this.databaseName) {
+        this.$store.dispatch('/database/table')
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请先连接数据库！',
+          showClose: true
+        })
+        this.$router.push('/database')
+      }
+    },
+    handleClickSql() {
+      if (this.databaseName) {
+        this.$store.dispatch('/sql/index')
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请先连接数据库！',
+          showClose: true
+        })
+        this.$router.push('/database')
+      }
     }
   },
   mounted() {

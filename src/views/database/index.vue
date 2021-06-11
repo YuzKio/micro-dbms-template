@@ -2,8 +2,7 @@
   <div class="app-container">
     <el-form :inline="true">
       <el-form-item style="float: right;">
-        <el-button type="primary" @click="createDatabase">创建数据库</el-button>
-        <el-button @click="deleteDatabase">删除数据库</el-button>
+        <el-button type="primary" @click="createDatabase()">创建数据库</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -24,13 +23,20 @@
           {{ scope.row.title }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="状态" width="110" align="center">
+      <el-table-column class-name="status-col" label="操作" width="200" align="center">
         <template slot-scope="scope">
           <el-button
-            :type="scope.row.status | statusFilter"
+            :type="'连接' | statusFilter"
             size="small"
+            @click="connectDatabase(scope.$index)"
           >
-            {{ scope.row.status }}
+            {{ statusOfDB[scope.$index] }}
+          </el-button>
+          <el-button
+            size="small"
+            @click="dropDatabase(scope.$index)"
+          >
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -45,7 +51,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/database'
+import { getList, connect, drop } from '@/api/database'
 
 export default {
   filters: {
@@ -61,7 +67,8 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      statusOfDB: []
     }
   },
   created() {
@@ -71,9 +78,16 @@ export default {
     fetchData() {
       this.listLoading = true
       getList().then(response => {
-        this.list = response.data.items
+        this.list = response.data
         this.listLoading = false
+        this.initStatus()
       })
+    },
+    initStatus() {
+      const len = this.list.length
+      for (let i = 0; i < len; i++) {
+        this.statusOfDB[i] = '连接'
+      }
     },
     createDatabase() {
       this.$prompt('请输入数据库名', '创建数据库', {
@@ -81,10 +95,29 @@ export default {
         cancelButtonText: '取消'
       })
     },
-    deleteDatabase() {
-      this.$prompt('请输入数据库名', '删除数据库', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
+    connectDatabase(index) {
+      const test = {
+        db_name: this.list[index].title
+      }
+      connect(test).then(response => {
+        // this.$forceUpdate()
+        this.$set(this.statusOfDB, index, '已连接')
+        var x = document.getElementById(index)
+        x.style = 'success'
+      }).catch(() => {
+        this.$forceUpdate()
+        this.$set(this.statusOfDB, index, '重试')
+        var x = document.getElementById(index)
+        x.style = 'danger'
+      })
+    },
+    dropDatabase(title) {
+      drop(title).then(response => {
+        this.$message({
+          type: 'success',
+          message: `数据库${title}已删除`,
+          showClose: true
+        })
       })
     }
 

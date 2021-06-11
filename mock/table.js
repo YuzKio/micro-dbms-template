@@ -8,7 +8,7 @@ const data = Mock.mock({
 
 module.exports = [
   {
-    url: '/vue-admin-template/table/list/show',
+    url: '/vue-admin-template/table/',
     type: 'get',
     response: config => {
       const items = data.items
