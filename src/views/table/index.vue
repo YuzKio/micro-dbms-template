@@ -3,9 +3,49 @@
 <!--    <el-input v-model="filterText" placeholder="Filter keyword" style="margin-bottom:30px;" />-->
     <el-form :inline="true">
       <el-form-item style="float: right;">
-        <el-button type="primary" @click="createTable()">创建数据表</el-button>
+        <el-button type="primary" @click="dialogFormVisible = true">创建数据表</el-button>
       </el-form-item>
     </el-form>
+    <el-dialog title="创建数据表" :visible.sync="dialogFormVisible">
+      <div style="margin: -20px 0 10px 0">
+<!--        数据表名称：-->
+        <el-input
+          v-model="newTableName"
+          placeholder="请输入数据表名称"
+          autocomplete="off"
+          size="100"
+        ></el-input>
+      </div>
+      <el-form :model="form">
+        <el-form-item label="属性" prop="addTimeList">
+          <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>
+        </el-form-item>
+        <div v-for="(item, index) in form.roundTimeList" :key="index">
+          <el-form-item
+            :label="`属性${index+1}`"
+            :prop="`roundTimeList[${index}].attrName`"
+            :rules="formRules.roundTimeList0"
+          >
+            <el-input v-model="item.attrName" placeholder="请输入属性名" style="width: 25%; margin-right: 10px"></el-input>
+            <el-select v-model="item.typeName" placeholder="请选择类型" style="width: 25%; margin-right: 10px">
+              <el-option label="int" value="int"></el-option>
+              <el-option label="float" value="float"></el-option>
+              <el-option label="char" value="char"></el-option>
+            </el-select>
+            <el-input v-model="item.len" placeholder="请输入数据长度" style="width: 25%; margin-right: 15px"></el-input>
+            <el-button type="danger" icon="el-icon-minus" circle size="mini" @click="delSession(index)"></el-button>
+            <el-checkbox-group v-model="checkList" style="margin-left: 60px">
+              <el-checkbox label="NOT NULL"></el-checkbox>
+              <el-checkbox label="PRIMARY KEY"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </div>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false" :rules="formRules.roundTimeList">确 定</el-button>
+      </div>
+    </el-dialog>
     <el-table
       v-loading="listLoading"
       :data="tableData"
@@ -43,7 +83,7 @@
           {{ scope.row.recordCount }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="操作" width="220" align="center">
+      <el-table-column class-name="status-col" label="操作" width="300" align="center">
         <template>
           <el-button
             size="small"
@@ -56,6 +96,13 @@
             size="small"
           >
             删除
+          </el-button>
+        </template>
+        <template>
+          <el-button
+            size="small"
+          >
+            schema
           </el-button>
         </template>
       </el-table-column>
@@ -73,7 +120,21 @@ export default {
     return {
       filterText: '',
       tableData: null,
-      listLoading: true
+      listLoading: true,
+      dialogFormVisible: false,
+      newTableName: '',
+      form: {
+        roundTimeList: []
+      },
+      checkList: [],
+      formRules: {
+        addTimeList: [
+          { required: true, message: '请添加属性', trigger: 'blur' }
+        ],
+        roundTimeList0: [
+          { required: true, message: '请填写属性项', trigger: 'change' }
+        ]
+      }
     }
   },
   created() {
@@ -101,8 +162,11 @@ export default {
     // },
     fetchTableData() {
       this.listLoading = true
-      getTableList().then(response => {
-        this.tableData = response.data.items
+      const db = {
+        db_name: this.$store.getters.databaseName
+      }
+      getTableList(db).then(response => {
+        this.tableData = response.data
         this.listLoading = false
       })
     },
@@ -131,6 +195,22 @@ export default {
           })
         })
       })
+    },
+    addSession() {
+      const obj = {
+        id: null,
+        startTime: '',
+        endTime: '',
+        timeRange: ['00:00:00', '23:59:59']
+      }
+      if (this.form.roundTimeList.length < 10) {
+        this.form.roundTimeList.push(obj)
+      } else {
+        this.$message.warning(`最多添加${this.roundTimeList.length}场`)
+      }
+    },
+    delSession(index) {
+      this.form.roundTimeList.splice(index, 1)
     }
   }
 }
