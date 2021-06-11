@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
-export function getTableList() {
+export function getTableList(params) {
   return request({
-    url: '/vue-admin-template/table/',
-    method: 'get'
+    url: 'http://39.105.24.214/ShowTables',
+    method: 'get',
+    params
   })
 }
