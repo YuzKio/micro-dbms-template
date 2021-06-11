@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { getList, connect, drop } from '@/api/database'
+import { getList, create, connect, drop } from '@/api/database'
 
 export default {
   // filters: {
@@ -105,7 +105,27 @@ export default {
     createDatabase() {
       this.$prompt('请输入数据库名', '创建数据库', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        inputPattern: /^[A-Za-z]\w+$/,
+        inputErrorMessage: '以英文字符开头，不包含除大小写字母、下划线和数字以外的符号'
+      }).then(({ value }) => {
+        const db = {
+          db_name: value
+        }
+        create(db).then(response => {
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: `数据库创建成功`,
+            showClose: true
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: `数据库创建失败`,
+            showClose: true
+          })
+        })
       })
     },
     connectDatabase(index) {
@@ -134,9 +154,16 @@ export default {
         db_name: this.list[index].title
       }
       drop(db).then(response => {
+        this.fetchData()
         this.$message({
           type: 'success',
           message: `数据库${db.db_name}已删除`,
+          showClose: true
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: `数据库删除失败`,
           showClose: true
         })
       })
