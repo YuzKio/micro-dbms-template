@@ -93,8 +93,13 @@ export default {
     initStatus() {
       const len = this.list.length
       for (let i = 0; i < len; i++) {
-        this.statusOfDB[i] = '连接'
-        this.btnBoolean[i] = false
+        if (this.$store.getters.databaseName === this.list[i].title) {
+          this.statusOfDB[i] = '已连接'
+          this.btnBoolean[i] = true
+        } else {
+          this.statusOfDB[i] = '连接'
+          this.btnBoolean[i] = false
+        }
       }
     },
     createDatabase() {
@@ -124,11 +129,14 @@ export default {
         this.btnBoolean[index] = false
       })
     },
-    dropDatabase(title) {
-      drop(title).then(response => {
+    dropDatabase(index) {
+      const db = {
+        db_name: this.list[index].title
+      }
+      drop(db).then(response => {
         this.$message({
           type: 'success',
-          message: `数据库${title}已删除`,
+          message: `数据库${db.db_name}已删除`,
           showClose: true
         })
       })
