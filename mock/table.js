@@ -2,7 +2,11 @@ const Mock = require('mockjs')
 
 const data = Mock.mock({
   'items|5': [{
-    title: '@sentence(5)'
+    title: '@sentence(5)',
+    tupleLen: '@integer(0,4)',
+    attrCount: '@integer(0,4)',
+    indexCount: '@integer(0,4)',
+    recordCount: '@integer(0,4)'
   }]
 })
 

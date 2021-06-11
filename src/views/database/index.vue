@@ -153,22 +153,27 @@ export default {
       const db = {
         db_name: this.list[index].title
       }
-      drop(db).then(response => {
-        this.fetchData()
-        this.$message({
-          type: 'success',
-          message: `数据库${db.db_name}已删除`,
-          showClose: true
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'error',
-          message: `数据库删除失败`,
-          showClose: true
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        drop(db).then(response => {
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: `数据库${db.db_name}已删除`,
+            showClose: true
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: `数据库删除失败`,
+            showClose: true
+          })
         })
       })
     }
-
   }
 }
 </script>
