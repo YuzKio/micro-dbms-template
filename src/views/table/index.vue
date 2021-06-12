@@ -1,49 +1,83 @@
 <template>
   <div class="app-container">
-<!--    <el-input v-model="filterText" placeholder="Filter keyword" style="margin-bottom:30px;" />-->
     <el-form :inline="true">
       <el-form-item style="float: right;">
         <el-button type="primary" @click="dialogFormVisible = true">创建数据表</el-button>
       </el-form-item>
     </el-form>
     <el-dialog title="创建数据表" :visible.sync="dialogFormVisible">
-      <div style="margin: -20px 0 10px 0">
-<!--        数据表名称：-->
-        <el-input
-          v-model="newTableName"
-          placeholder="请输入数据表名称"
-          autocomplete="off"
-          size="100"
-        ></el-input>
-      </div>
-      <el-form :model="form">
-        <el-form-item label="属性" prop="addTimeList">
+      <el-form style="margin: -20px 0 10px 0" ref="" :rules="formRules">
+        <el-form-item prop="newTableName">
+          <el-input
+            v-model="newTableName"
+            placeholder="请输入数据表名称"
+            autocomplete="off"
+            size="100"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+
+      <el-form :model="form" ref="form" :rules="formRules.attrList" :inline="true">
+        <el-form-item label="属性" prop="attrList">
           <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>
         </el-form-item>
-        <div v-for="(item, index) in form.roundTimeList" :key="index">
+        <div v-for="(item, index) in form.attrList" :key="index">
           <el-form-item
             :label="`属性${index+1}`"
-            :prop="`roundTimeList[${index}].attrName`"
-            :rules="formRules.roundTimeList0"
+            :prop="`attrList[${index}].attrName`"
+            :rules="formRules.attrList"
           >
-            <el-input v-model="item.attrName" placeholder="请输入属性名" style="width: 25%; margin-right: 10px"></el-input>
-            <el-select v-model="item.typeName" placeholder="请选择类型" style="width: 25%; margin-right: 10px">
-              <el-option label="int" value="int"></el-option>
-              <el-option label="float" value="float"></el-option>
-              <el-option label="char" value="char"></el-option>
-            </el-select>
-            <el-input v-model="item.len" placeholder="请输入数据长度" style="width: 25%; margin-right: 15px"></el-input>
-            <el-button type="danger" icon="el-icon-minus" circle size="mini" @click="delSession(index)"></el-button>
-            <el-checkbox-group v-model="checkList" style="margin-left: 60px">
-              <el-checkbox label="NOT NULL"></el-checkbox>
-              <el-checkbox label="PRIMARY KEY"></el-checkbox>
-            </el-checkbox-group>
+            <el-col :span="8">
+              <el-form-item prop="attrName">
+                <el-input
+                  v-model="item.attrName"
+                  placeholder="请输入属性名"
+                  class="attr-item"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="typeName">
+                <el-select
+                  v-model="item.typeName"
+                  placeholder="请选择类型"
+                  class="attr-item"
+                  style="padding-right: 5px"
+                >
+                  <el-option label="int" value="int"></el-option>
+                  <el-option label="float" value="float"></el-option>
+                  <el-option label="char" value="char"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item prop="attrLen">
+                <el-input
+                  v-model="item.attrLen"
+                  placeholder="请输入数据长度"
+                  class="attr-item"
+                ></el-input>
+              </el-form-item>
+            </el-col>
           </el-form-item>
+          <el-button
+            type="danger"
+            icon="el-icon-minus"
+            circle
+            size="mini"
+            @click="delSession(index)"
+            style="margin-top: 5px"
+          ></el-button>
+          <el-checkbox-group v-model="item.checkList" style="margin: -5px 0 20px 60px">
+            <el-checkbox label="NOT NULL"></el-checkbox>
+            <el-checkbox label="PRIMARY KEY"></el-checkbox>
+          </el-checkbox-group>
         </div>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false" :rules="formRules.roundTimeList">确 定</el-button>
+        <el-button type="primary" @click="handleConfirm()">确 定</el-button>
       </div>
     </el-dialog>
     <el-table
@@ -118,21 +152,21 @@ import { create } from '@/api/database'
 export default {
   data() {
     return {
-      filterText: '',
       tableData: null,
       listLoading: true,
       dialogFormVisible: false,
       newTableName: '',
       form: {
-        roundTimeList: []
+        attrList: []
       },
-      checkList: [],
       formRules: {
-        addTimeList: [
-          { required: true, message: '请添加属性', trigger: 'blur' }
-        ],
-        roundTimeList0: [
-          { required: true, message: '请填写属性项', trigger: 'change' }
+        attrList: {
+          attrName: [{ required: true, message: '请填写属性名', trigger: 'blur' }],
+          typeName: [{ required: true, message: '请选择类型', trigger: 'change' }],
+          attrLen: [{ required: true, message: '请输入长度', trigger: 'blur' }]
+        },
+        newTableName: [
+          { required: true, message: '请填写数据表名', trigger: 'blur' }
         ]
       }
     }
@@ -163,10 +197,10 @@ export default {
     fetchTableData() {
       this.listLoading = true
       const db = {
-        db_name: this.$store.getters.databaseName
+        db_name: `${this.$store.getters.databaseName}`
       }
       getTableList(db).then(response => {
-        this.tableData = response.data
+        this.tableData = response.data.items
         this.listLoading = false
       })
     },
@@ -198,21 +232,27 @@ export default {
     },
     addSession() {
       const obj = {
-        id: null,
-        startTime: '',
-        endTime: '',
-        timeRange: ['00:00:00', '23:59:59']
+        attrName: '',
+        typeName: '',
+        attrLen: null,
+        checkList: []
       }
-      if (this.form.roundTimeList.length < 10) {
-        this.form.roundTimeList.push(obj)
-      } else {
-        this.$message.warning(`最多添加${this.roundTimeList.length}场`)
-      }
+      this.form.attrList.push(obj)
     },
     delSession(index) {
-      this.form.roundTimeList.splice(index, 1)
+      this.form.attrList.splice(index, 1)
+    },
+    handleConfirm() {
+      this.dialogFormVisible = false
+      console.log(this.form.attrList)
     }
   }
 }
 </script>
 
+<style scoped lang="scss">
+.attr-item {
+  width: 100%;
+  margin-right: -40px
+}
+</style>
