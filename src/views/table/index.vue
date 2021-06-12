@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true">
+    <el-form>
       <el-form-item style="float: right;">
         <el-button type="primary" @click="dialogFormVisible = true">创建数据表</el-button>
       </el-form-item>
@@ -18,13 +18,12 @@
           <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>
         </el-form-item>
         <div v-for="(item, index) in form.attrList" :key="index">
-          <el-form-item
-            :label="`属性${index+1}`"
-          >
-            <el-col :span="4">
+          <el-form-item :label="`属性${index+1}`" style="margin: -10px 0 -10px 0">
+            <el-col :span="8">
               <el-form-item
                 :prop="`attrList[${index}].attrName`"
                 :rules="formRules.attrName"
+                label-width="100px"
               >
                 <el-input
                   v-model="item.attrName"
@@ -33,16 +32,16 @@
                 ></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8">
               <el-form-item
                 :prop="`attrList[${index}].typeName`"
                 :rules="formRules.typeName"
+                label-width="100px"
               >
                 <el-select
                   v-model="item.typeName"
                   placeholder="请选择类型"
                   class="attr-item"
-                  style="padding-right: 5px"
                 >
                   <el-option label="int" value="int"></el-option>
                   <el-option label="float" value="float"></el-option>
@@ -50,10 +49,11 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8">
               <el-form-item
                 :prop="`attrList[${index}].attrLen`"
                 :rules="formRules.attrLen"
+                label-width="100px"
               >
                 <el-input
                   v-model="item.attrLen"
@@ -69,7 +69,7 @@
             circle
             size="mini"
             @click="delSession(index)"
-            style="margin-top: 5px"
+            style="display: inline"
           ></el-button>
           <el-checkbox-group v-model="item.checkList" style="margin: -5px 0 20px 60px">
             <el-checkbox label="NOT NULL"></el-checkbox>
@@ -77,75 +77,6 @@
           </el-checkbox-group>
         </div>
       </el-form>
-<!--      <el-form style="margin: -20px 0 10px 0" ref="newTableName" :rules="formRules">-->
-<!--        <el-form-item prop="newTableName">-->
-<!--          <el-input-->
-<!--            v-model="newTableName"-->
-<!--            placeholder="请输入数据表名称"-->
-<!--            autocomplete="off"-->
-<!--            size="100"-->
-<!--          ></el-input>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-
-<!--      <el-form :model="form" ref="form" :rules="formRules.attrList" :inline="true">-->
-<!--        <el-form-item label="属性" prop="attrList">-->
-<!--          <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>-->
-<!--        </el-form-item>-->
-<!--        <div v-for="(item, index) in form.attrList" :key="index">-->
-<!--          <el-form-item-->
-<!--            :label="`属性${index+1}`"-->
-<!--            :prop="`attrList[${index}].attrName`"-->
-<!--            :rules="formRules.attrList"-->
-<!--          >-->
-<!--            <el-col :span="8">-->
-<!--              <el-form-item prop="attrName">-->
-<!--                <el-input-->
-<!--                  v-model="item.attrName"-->
-<!--                  placeholder="请输入属性名"-->
-<!--                  class="attr-item"-->
-<!--                ></el-input>-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
-<!--            <el-col :span="8">-->
-<!--              <el-form-item prop="typeName">-->
-<!--                <el-select-->
-<!--                  v-model="item.typeName"-->
-<!--                  placeholder="请选择类型"-->
-<!--                  class="attr-item"-->
-<!--                  style="padding-right: 5px"-->
-<!--                >-->
-<!--                  <el-option label="int" value="int"></el-option>-->
-<!--                  <el-option label="float" value="float"></el-option>-->
-<!--                  <el-option label="char" value="char"></el-option>-->
-<!--                </el-select>-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
-<!--            <el-col :span="8">-->
-<!--              <el-form-item prop="attrLen">-->
-<!--                <el-input-->
-<!--                  v-model="item.attrLen"-->
-<!--                  placeholder="请输入数据长度"-->
-<!--                  class="attr-item"-->
-<!--                ></el-input>-->
-<!--              </el-form-item>-->
-<!--            </el-col>-->
-<!--          </el-form-item>-->
-<!--          <el-button-->
-<!--            type="danger"-->
-<!--            icon="el-icon-minus"-->
-<!--            circle-->
-<!--            size="mini"-->
-<!--            @click="delSession(index)"-->
-<!--            style="margin-top: 5px"-->
-<!--          ></el-button>-->
-<!--          <el-checkbox-group v-model="item.checkList" style="margin: -5px 0 20px 60px">-->
-<!--            <el-checkbox label="NOT NULL"></el-checkbox>-->
-<!--            <el-checkbox label="PRIMARY KEY"></el-checkbox>-->
-<!--          </el-checkbox-group>-->
-<!--        </div>-->
-<!--      </el-form>-->
-
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleConfirm()">确 定</el-button>
@@ -237,20 +168,6 @@ export default {
         typeName: [{ required: true, message: '请选择类型', trigger: ['change', 'blur'] }],
         attrLen: [{ required: true, message: '请输入长度', trigger: 'blur' }]
       }
-      // newTableName: '',
-      // form: {
-      //   attrList: []
-      // },
-      // formRules: {
-      //   attrList: {
-      //     attrName: [{ required: true, message: '请填写属性名', trigger: 'blur' }],
-      //     typeName: [{ required: true, message: '请选择类型', trigger: 'change' }],
-      //     attrLen: [{ required: true, message: '请输入长度', trigger: 'blur' }]
-      //   },
-      //   newTableName: [
-      //     { required: true, message: '请填写数据表名', trigger: 'blur' }
-      //   ]
-      // }
     }
   },
   created() {
@@ -335,6 +252,7 @@ export default {
 <style scoped lang="scss">
 .attr-item {
   width: 100%;
-  padding-right: 40px
+  margin-left: -100px;
+  padding-right: -40px
 }
 </style>
