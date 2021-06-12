@@ -18,12 +18,11 @@
           <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>
         </el-form-item>
         <div v-for="(item, index) in form.attrList" :key="index">
-          <el-form-item :label="`属性${index+1}`" style="margin: -10px 0 -10px 0">
-            <el-col :span="8">
+          <el-form-item :label="`属性${index+1}`" style="display: inline; margin: -10px 0 -10px 0">
+            <el-col :span="6">
               <el-form-item
                 :prop="`attrList[${index}].attrName`"
                 :rules="formRules.attrName"
-                label-width="100px"
               >
                 <el-input
                   v-model="item.attrName"
@@ -32,11 +31,10 @@
                 ></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item
                 :prop="`attrList[${index}].typeName`"
                 :rules="formRules.typeName"
-                label-width="100px"
               >
                 <el-select
                   v-model="item.typeName"
@@ -49,11 +47,10 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item
                 :prop="`attrList[${index}].attrLen`"
                 :rules="formRules.attrLen"
-                label-width="100px"
               >
                 <el-input
                   v-model="item.attrLen"
@@ -62,16 +59,18 @@
                 ></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="4">
+              <el-button
+                type="danger"
+                icon="el-icon-minus"
+                circle
+                size="mini"
+                @click="delSession(index)"
+              ></el-button>
+            </el-col>
           </el-form-item>
-          <el-button
-            type="danger"
-            icon="el-icon-minus"
-            circle
-            size="mini"
-            @click="delSession(index)"
-            style="display: inline"
-          ></el-button>
-          <el-checkbox-group v-model="item.checkList" style="margin: -5px 0 20px 60px">
+
+          <el-checkbox-group v-model="item.checkList" style="margin: 15px 0 20px 60px">
             <el-checkbox label="NOT NULL"></el-checkbox>
             <el-checkbox label="PRIMARY KEY"></el-checkbox>
           </el-checkbox-group>
@@ -120,25 +119,28 @@
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="操作" width="300" align="center">
-        <template>
+        <template slot-scope="scope">
           <el-button
+            type="primary"
             size="small"
+            plain
+            @click="handleDetail(scope.$index)"
           >
             查看
           </el-button>
-        </template>
-        <template>
           <el-button
             size="small"
+            @click="handleSchema(scope.row.title)"
+          >
+            模式
+          </el-button>
+          <el-button
+            type="info"
+            size="small"
+            plain
+            @click="handleDelete(scope.row.title)"
           >
             删除
-          </el-button>
-        </template>
-        <template>
-          <el-button
-            size="small"
-          >
-            schema
           </el-button>
         </template>
       </el-table-column>
@@ -148,8 +150,8 @@
 </template>
 
 <script>
-import { getTableList } from '@/api/table'
-import { create } from '@/api/database'
+import { getTableList, createTable, deleteTable } from '@/api/table'
+import { isNum } from '@/utils/validate'
 
 export default {
   data() {
@@ -166,7 +168,9 @@ export default {
         roundTimeName: [{ required: true, message: '请添加属性', trigger: 'blur' }],
         attrName: [{ required: true, message: '请填写属性名', trigger: 'blur' }],
         typeName: [{ required: true, message: '请选择类型', trigger: ['change', 'blur'] }],
-        attrLen: [{ required: true, message: '请输入长度', trigger: 'blur' }]
+        attrLen: [
+          { required: true, message: '非法长度', trigger: 'blur', validator: isNum }
+        ]
       }
     }
   },
@@ -189,44 +193,14 @@ export default {
     }
   },
   methods: {
-    // filterNode(value, data) {
-    //   if (!value) return true
-    //   return data.label.indexOf(value) !== -1
-    // },
     fetchTableData() {
       this.listLoading = true
       const db = {
         db_name: `${this.$store.getters.databaseName}`
       }
       getTableList(db).then(response => {
-        this.tableData = response.data.items
+        this.tableData = response.data
         this.listLoading = false
-      })
-    },
-    createTable() {
-      this.$prompt('请输入数据表名', '创建数据表', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^[A-Za-z]\w+$/,
-        inputErrorMessage: '以英文字符开头，不包含除大小写字母、下划线和数字以外的符号'
-      }).then(({ value }) => {
-        const db = {
-          db_name: value
-        }
-        create(db).then(response => {
-          this.fetchData()
-          this.$message({
-            type: 'success',
-            message: `数据库创建成功`,
-            showClose: true
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: `数据库创建失败`,
-            showClose: true
-          })
-        })
       })
     },
     addSession() {
@@ -242,8 +216,55 @@ export default {
       this.form.attrList.splice(index, 1)
     },
     handleConfirm() {
-      this.dialogFormVisible = false
-      console.log(this.form.attrList)
+      let sendData = {}
+      sendData.dbName = `${this.$store.getters.databaseName}`
+      sendData.newTableName = this.form.newTableName
+      sendData.attrs = this.form.attrList
+      sendData = JSON.stringify(sendData)
+      createTable(sendData).then(response => {
+        this.fetchTableData()
+        this.$message({
+          type: 'success',
+          message: `数据表创建成功`,
+          showClose: true
+        })
+        this.form.newTableName = ''
+        this.form.attrList = []
+        this.dialogFormVisible = false
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: `数据表创建失败`,
+          showClose: true
+        })
+      })
+    },
+    handleDelete(name) {
+      const table = {
+        tb_name: name,
+        db_name: `${this.$store.getters.databaseName}`
+      }
+      console.log(table)
+      deleteTable(table).then(response => {
+        this.fetchTableData()
+        this.$message({
+          type: 'success',
+          message: `数据表删除成功`,
+          showClose: true
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: `数据表删除失败`,
+          showClose: true
+        })
+      })
+    },
+    handleDetail(index) {
+      alert(index)
+    },
+    handleSchema(name) {
+      alert(name)
     }
   }
 }
@@ -252,7 +273,6 @@ export default {
 <style scoped lang="scss">
 .attr-item {
   width: 100%;
-  margin-left: -100px;
-  padding-right: -40px
+  padding-right: 20px
 }
 </style>

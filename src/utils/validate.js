@@ -25,3 +25,12 @@ export function validUsername(str) {
 export function validPassword(usn, psw) {
   return valid_map[usn] === psw
 }
+
+export const isNum = (rule, value, callback) => {
+  const len = /^\d*$/
+  if (!len.test(value)) {
+    callback(new Error('长度只能为数字'))
+  } else {
+    callback()
+  }
+}
