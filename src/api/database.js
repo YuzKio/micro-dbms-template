@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export function getList(params) {
   return request({
     // url: '/vue-admin-template/table/list',
-    url: 'http://39.105.24.214/ShowDatabases',
+    url: 'http://39.105.24.214/database/ShowDatabases',
     method: 'get',
     params
   })
@@ -11,7 +11,7 @@ export function getList(params) {
 
 export function create(params) {
   return request({
-    url: 'http://39.105.24.214/CreateDatabase',
+    url: 'http://39.105.24.214/database/CreateDatabase',
     method: 'get',
     params
   })
@@ -19,7 +19,7 @@ export function create(params) {
 
 export function connect(params) {
   return request({
-    url: 'http://39.105.24.214/UseDatabase',
+    url: 'http://39.105.24.214/database/UseDatabase',
     method: 'get',
     params
   })
@@ -27,7 +27,7 @@ export function connect(params) {
 
 export function drop(params) {
   return request({
-    url: 'http://39.105.24.214/DropDatabase',
+    url: 'http://39.105.24.214/database/DropDatabase',
     method: 'get',
     params
   })
