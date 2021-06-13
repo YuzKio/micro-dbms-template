@@ -28,7 +28,7 @@
                 size="small"
                 @click.native.prevent="deleteRow(scope.$index, table.name)"
               >
-                移除
+                删除数据
               </el-button>
             </template>
           </el-table-column>
@@ -107,25 +107,25 @@ export default {
           name: '王小虎',
           province: '上海',
           city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
+          address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-02',
           name: '王小虎2',
           province: '上海',
           city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
+          address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-04',
           name: '王小虎3',
           province: '上海',
           city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
+          address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-01',
           name: '王小虎4',
           province: '上海',
           city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
+          address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-08',
           name: '王小虎5',
@@ -137,7 +137,7 @@ export default {
           name: '王小虎6',
           province: '上海',
           city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
+          address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-07',
           name: '王小虎7',
