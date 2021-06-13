@@ -20,7 +20,17 @@ export function createTable(params) {
 
 export function deleteTable(params) {
   return request({
-    url: 'http://39.105.24.214/table/CreateTable',
+    // url: '/vue-admin-template/table/',
+    url: 'http://39.105.24.214/table/DropTable',
+    method: 'get',
+    params
+  })
+}
+
+export function descTable(params) {
+  return request({
+    // url: '/vue-admin-template/table/',
+    url: 'http://39.105.24.214/table/DescTable',
     method: 'get',
     params
   })

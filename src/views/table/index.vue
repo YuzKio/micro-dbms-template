@@ -145,20 +145,42 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <el-dialog title="数据表模式" :visible.sync="dialogSchemaVisible">
+      <el-table
+        :data="schemaList.data"
+      >
+        <el-table-column
+          v-for="(name, index) in schemaList.attrName"
+          :key="index"
+          align="center"
+          :label="name"
+          :prop="name"
+        >
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getTableList, createTable, deleteTable } from '@/api/table'
+import { getTableList, createTable, deleteTable, descTable } from '@/api/table'
 import { isNum } from '@/utils/validate'
 
 export default {
   data() {
     return {
       tableData: null,
+      schemaList: {
+        attrName: ['attr1', 'attr2', 'attr3'],
+        data: [{
+          attr1: '1',
+          attr2: '2',
+          attr3: '3'
+        }]
+      },
       listLoading: true,
       dialogFormVisible: false,
+      dialogSchemaVisible: false,
       form: {
         newTableName: '',
         attrList: []
@@ -169,7 +191,8 @@ export default {
         attrName: [{ required: true, message: '请填写属性名', trigger: 'blur' }],
         typeName: [{ required: true, message: '请选择类型', trigger: ['change', 'blur'] }],
         attrLen: [
-          { required: true, message: '非法长度', trigger: 'blur', validator: isNum }
+          { required: true, message: '请填写属性长度', trigger: 'blur' },
+          { validator: isNum, trigger: 'blur' }
         ]
       }
     }
@@ -244,7 +267,6 @@ export default {
         tb_name: name,
         db_name: `${this.$store.getters.databaseName}`
       }
-      console.log(table)
       deleteTable(table).then(response => {
         this.fetchTableData()
         this.$message({
@@ -264,7 +286,21 @@ export default {
       alert(index)
     },
     handleSchema(name) {
-      alert(name)
+      console.log(this.schemaList)
+      const table = {
+        tb_name: name,
+        db_name: `${this.$store.getters.databaseName}`
+      }
+      descTable(table).then(response => {
+        this.schemaList = Object.assign({}, response.data)
+        this.dialogSchemaVisible = true
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: `请重试`,
+          showClose: true
+        })
+      })
     }
   }
 }
