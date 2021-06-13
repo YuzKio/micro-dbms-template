@@ -5,7 +5,7 @@
         <el-button type="primary" @click="dialogFormVisible = true">创建数据表</el-button>
       </el-form-item>
     </el-form>
-    <el-dialog title="创建数据表" :visible.sync="dialogFormVisible">
+    <el-dialog title="创建数据表" :visible.sync="dialogFormVisible" @open="validatePrepare">
       <el-form :model="form" ref="form" :rules="formRules">
         <el-form-item prop="newTableName" style="margin: -20px 0 20px 0">
           <el-input
@@ -14,7 +14,7 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="属性" prop="roundTimeList">
+        <el-form-item label="属性" prop="attr" :rules="formRules.attr">
           <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>
         </el-form-item>
         <div v-for="(item, index) in form.attrList" :key="index">
@@ -71,14 +71,14 @@
           </el-form-item>
 
           <el-checkbox-group v-model="item.checkList" style="margin: 15px 0 20px 60px">
-            <el-checkbox label="NOT NULL"></el-checkbox>
-            <el-checkbox label="PRIMARY KEY"></el-checkbox>
+            <el-checkbox label="NOT NULL" @change="checked => handleNotNullChange(checked, index)"></el-checkbox>
+            <el-checkbox label="PRIMARY KEY" @change="checked => handlePrimaryChange(checked, index)"></el-checkbox>
           </el-checkbox-group>
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleConfirm()">确 定</el-button>
+        <el-button type="primary" @click="handleConfirm(form)">确 定</el-button>
       </div>
     </el-dialog>
     <el-table
@@ -170,6 +170,7 @@ import { isNum } from '@/utils/validate'
 export default {
   data() {
     return {
+      validForm: false,
       tableData: null,
       schemaList: {
         attrName: [],
@@ -184,7 +185,7 @@ export default {
       },
       formRules: {
         newTableName: [{ required: true, message: '请填写数据表名', trigger: 'blur' }],
-        roundTimeName: [{ required: true, message: '请添加属性', trigger: 'blur' }],
+        attr: [{ required: true, message: '请添加属性', trigger: 'blur' }],
         attrName: [{ required: true, message: '请填写属性名', trigger: 'blur' }],
         typeName: [{ required: true, message: '请选择类型', trigger: ['change', 'blur'] }],
         attrLen: [
@@ -234,28 +235,41 @@ export default {
     delSession(index) {
       this.form.attrList.splice(index, 1)
     },
-    handleConfirm() {
-      let sendData = {}
-      sendData.dbName = `${this.$store.getters.databaseName}`
-      sendData.newTableName = this.form.newTableName
-      sendData.attrs = this.form.attrList
-      sendData = JSON.stringify(sendData)
-      createTable(sendData).then(response => {
-        this.fetchTableData()
-        this.$message({
-          type: 'success',
-          message: `数据表创建成功`,
-          showClose: true
-        })
-        this.form.newTableName = ''
-        this.form.attrList = []
-        this.dialogFormVisible = false
-      }).catch(() => {
-        this.$message({
-          type: 'error',
-          message: `数据表创建失败`,
-          showClose: true
-        })
+    handleConfirm(formName) {
+      this.$nextTick(() => {
+        console.log(this.$refs[formName])
+      })
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let sendData = {}
+          sendData.dbName = `${this.$store.getters.databaseName}`
+          sendData.newTableName = this.form.newTableName
+          sendData.attrs = this.form.attrList
+          sendData = JSON.stringify(sendData)
+          createTable(sendData).then(response => {
+            this.fetchTableData()
+            this.$message({
+              type: 'success',
+              message: `数据表创建成功`,
+              showClose: true
+            })
+            this.form.newTableName = ''
+            this.form.attrList = []
+            this.dialogFormVisible = false
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: `数据表创建失败`,
+              showClose: true
+            })
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: `请完成表单！`,
+            showClose: true
+          })
+        }
       })
     },
     handleDelete(name) {
@@ -298,6 +312,19 @@ export default {
         })
       })
       this.listLoading = false
+    },
+    handleNotNullChange(checked, index) {
+      if (!checked) {
+        this.form.attrList[index].checkList = []
+      }
+    },
+    handlePrimaryChange(checked, index) {
+      if (checked) {
+        this.form.attrList[index].checkList = ['NOT NULL', 'PRIMARY KEY']
+      }
+    },
+    validatePrepare() {
+      console.log(this.$refs[this.form])
     }
   }
 }
