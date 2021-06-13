@@ -17,15 +17,6 @@
             :label="name"
             width="150"
           />
-          <!--          <el-table-column-->
-          <!--            prop="name"-->
-          <!--            label="姓名"-->
-          <!--            width="120">-->
-          <!--          </el-table-column>-->
-          <!--          <el-table-column-->
-          <!--            prop="province"-->
-          <!--            label="省份"-->
-          <!--            width="120">-->
           <el-table-column
             fixed="right"
             label="操作"
