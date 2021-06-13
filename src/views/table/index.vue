@@ -7,7 +7,7 @@
     </el-form>
     <el-dialog title="创建数据表" :visible.sync="dialogFormVisible">
       <el-form :model="form" ref="form" :rules="formRules">
-        <el-form-item prop="newTableName" style="margin: -20px 0 10px 0">
+        <el-form-item prop="newTableName" style="margin: -20px 0 20px 0">
           <el-input
             v-model="form.newTableName"
             placeholder="请输入数据表名称"
@@ -145,8 +145,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="数据表模式" :visible.sync="dialogSchemaVisible">
+    <el-dialog title="数据表模式" :visible.sync="dialogSchemaVisible" width="80%">
       <el-table
+        v-loading="listLoading"
         :data="schemaList.data"
       >
         <el-table-column
@@ -171,12 +172,8 @@ export default {
     return {
       tableData: null,
       schemaList: {
-        attrName: ['attr1', 'attr2', 'attr3'],
-        data: [{
-          attr1: '1',
-          attr2: '2',
-          attr3: '3'
-        }]
+        attrName: [],
+        data: []
       },
       listLoading: true,
       dialogFormVisible: false,
@@ -198,17 +195,16 @@ export default {
     }
   },
   created() {
-    // if (!this.$store.getters.databaseName) {
-    //   this.$message({
-    //     type: 'error',
-    //     message: '请先连接数据库！',
-    //     showClose: true
-    //   })
-    //   this.$router.push('/database')
-    // } else {
-    //   this.fetchTableData()
-    // }
-    this.fetchTableData()
+    if (!this.$store.getters.databaseName) {
+      this.$message({
+        type: 'error',
+        message: '请先连接数据库！',
+        showClose: true
+      })
+      this.$router.push('/database')
+    } else {
+      this.fetchTableData()
+    }
   },
   watch: {
     filterText(val) {
@@ -286,7 +282,7 @@ export default {
       alert(index)
     },
     handleSchema(name) {
-      console.log(this.schemaList)
+      this.listLoading = true
       const table = {
         tb_name: name,
         db_name: `${this.$store.getters.databaseName}`
@@ -301,6 +297,7 @@ export default {
           showClose: true
         })
       })
+      this.listLoading = false
     }
   }
 }

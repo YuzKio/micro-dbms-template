@@ -7,7 +7,7 @@
           element-loading-text="Loading"
           :data="table.data"
           style="width: 100%"
-          max-height="250"
+          max-height="450"
         >
           <el-table-column
             v-for="name in table.attrNum"
