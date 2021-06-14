@@ -4,7 +4,7 @@
     <div class="dashboard-info">
       <div class="dashboard-status">
         <span>现在连接的数据库：</span>
-        <span v-if="!databaseName.length">无</span>
+        <span v-if="!this.databaseName.length">无</span>
         <span v-else>{{ databaseName }}</span>
       </div>
       <div class="dashboard-timer">{{ nowTime }}</div>

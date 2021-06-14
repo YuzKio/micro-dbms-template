@@ -14,8 +14,15 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="属性" prop="attr" :rules="formRules.attr">
-          <el-button type="primary" icon="el-icon-plus" size="small" @click="addSession">添加属性</el-button>
+        <el-form-item label="属性" prop="attrList">
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            size="small"
+            @click="addSession"
+          >
+            添加属性
+          </el-button>
         </el-form-item>
         <div v-for="(item, index) in form.attrList" :key="index">
           <el-form-item :label="`属性${index+1}`" style="display: inline; margin: -10px 0 -10px 0">
@@ -124,7 +131,7 @@
             type="primary"
             size="small"
             plain
-            @click="handleDetail(scope.$index)"
+            @click="handleDetail(scope.row.title)"
           >
             查看
           </el-button>
@@ -185,7 +192,7 @@ export default {
       },
       formRules: {
         newTableName: [{ required: true, message: '请填写数据表名', trigger: 'blur' }],
-        attr: [{ required: true, message: '请添加属性', trigger: 'blur' }],
+        attrList: [{ required: true, message: '请添加属性', trigger: 'blur' }],
         attrName: [{ required: true, message: '请填写属性名', trigger: 'blur' }],
         typeName: [{ required: true, message: '请选择类型', trigger: ['change', 'blur'] }],
         attrLen: [
@@ -212,6 +219,9 @@ export default {
       this.$refs.tree2.filter(val)
     }
   },
+  mounted() {
+    this.validatePrepare()
+  },
   methods: {
     fetchTableData() {
       this.listLoading = true
@@ -235,11 +245,8 @@ export default {
     delSession(index) {
       this.form.attrList.splice(index, 1)
     },
-    handleConfirm(formName) {
-      this.$nextTick(() => {
-        console.log(this.$refs[formName])
-      })
-      this.$refs[formName].validate((valid) => {
+    handleConfirm() {
+      this.$refs['form'].validate((valid) => {
         if (valid) {
           let sendData = {}
           sendData.dbName = `${this.$store.getters.databaseName}`
@@ -255,6 +262,7 @@ export default {
             })
             this.form.newTableName = ''
             this.form.attrList = []
+            // this.form.resetFields()
             this.dialogFormVisible = false
           }).catch(() => {
             this.$message({
@@ -292,8 +300,8 @@ export default {
         })
       })
     },
-    handleDetail(index) {
-      alert(index)
+    handleDetail(name) {
+      this.$router.push(`/detail/index?activeName=${name}`)
     },
     handleSchema(name) {
       this.listLoading = true
@@ -324,7 +332,7 @@ export default {
       }
     },
     validatePrepare() {
-      console.log(this.$refs[this.form])
+      this.$nextTick(() => {})
     }
   }
 }

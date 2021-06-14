@@ -1,6 +1,6 @@
 <template>
   <div class="app-container container">
-    <el-form ref="form" :model="form" label-width="60px" style="display: inline-block; width: 50%">
+    <el-form ref="form" :model="form" label-width="60px" style="display: inline-block; width: 50%;">
       <el-form-item>
         <el-input
           v-model="form.textarea"
@@ -8,12 +8,13 @@
           type="textarea"
           :rows="19"
           placeholder="请输入sql语句"
-          style="width: 450px"
+          style="width: 450px; margin:0 10px 0 -20px"
         />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">运行</el-button>
         <el-button @click="onCancel">重置</el-button>
+        <span style="margin-left: 50px">当前连接数据库：{{ this.$store.getters.databaseName }}</span>
       </el-form-item>
     </el-form>
     <div class = "result">
@@ -28,16 +29,17 @@
         border
         fit
         highlight-current-row
-        style="display: inline-block; max-width: 90%"
+        max-height="420"
+        style="display: inline-block; width: 100%;"
+        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
       >
         <el-table-column
-          v-for="item in list.attrNum"
+          v-for="item in list.attrName"
           :key="item"
           fixed
           align="center"
           :label="item"
           :prop="item"
-          width="100"
         >
         </el-table-column>
       </el-table>
@@ -53,74 +55,28 @@ export default {
     return {
       form: {
         textarea: ''
-        // reset: false
       },
-      status: '更新成功',
+      status: '',
       list: {
-        attrNum: ['date', 'name', 'province', 'city', 'address', 'zip'],
-        data: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-02',
-          name: '王小虎2',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-04',
-          name: '王小虎3',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎4',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-08',
-          name: '王小虎5',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-06',
-          name: '王小虎6',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-07',
-          name: '王小虎7',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }]
+        attrName: [],
+        data: []
       },
-      showTable: true,
-      listLoading: false
+      listLoading: false,
+      showTable: false
     }
   },
   methods: {
     onSubmit() {
-      runSql(this.form.textarea).then(response => {
-        this.status = response.data.message
-        this.list = response.data.items
-        if (this.list) { this.showTable = true }
+      const query = {
+        db_name: `${this.$store.getters.databaseName}`,
+        queries: (this.form.textarea).replace(/[\r\n]/g, '')
+      }
+      runSql(JSON.stringify(query)).then(response => {
+        this.status = response.info
+        this.list = response.data[0]
+        this.showTable = !!this.list
+        this.$message('submit!')
       })
-      this.$message('submit!')
     },
     onCancel() {
       this.form.textarea = ' '
@@ -145,13 +101,18 @@ el-form-item {
 .result{
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width:100%;
-  padding:0 20px;
-  box-sizing:content-box;
+  margin: 0 20px;
+  box-sizing:border-box;
+  border: 1px solid #DCDFE6;
 }
 .showRes{
-  padding:20px 100px;
+  /*padding:20px 100px;*/
+  box-sizing: border-box;
+  width: 100%;
+  height: 8%;
+  padding: 10px 20px;
+  color: white;
   background-color:lightskyblue;
 }
 
