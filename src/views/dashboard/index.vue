@@ -14,7 +14,7 @@
       <ul class="dashboard-todo-nav">
         <li>
           <div class="dashboard-todo-nav-card">
-            <img src="https://element.eleme.cn/static/guide.0a8462c.png" />
+            <img src="@/assets/home_images/connect_pic.png" />
             <div>
               <router-link to="/database">连接数据库</router-link>
             </div>
@@ -22,7 +22,7 @@
         </li>
         <li>
           <div class="dashboard-todo-nav-card">
-            <img src="https://element.eleme.cn/static/resource.a72b8f8.png" />
+            <img src="@/assets/home_images/manage_pic.png" />
             <div @click="handleClickManage()">
               <span>管理数据表</span>
             </div>
@@ -30,7 +30,7 @@
         </li>
         <li>
           <div class="dashboard-todo-nav-card" @click="handleClickSql()">
-            <img src="https://element.eleme.cn/static/component.bd3411b.png" />
+            <img src="@/assets/home_images/sql_pic.png" />
             <div>
               <router-link to="/sql/index">指令编写</router-link>
             </div>

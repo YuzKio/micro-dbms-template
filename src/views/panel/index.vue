@@ -67,6 +67,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.status = ''
       const query = {
         db_name: `${this.$store.getters.databaseName}`,
         queries: (this.form.textarea).replace(/[\r\n]/g, '')
